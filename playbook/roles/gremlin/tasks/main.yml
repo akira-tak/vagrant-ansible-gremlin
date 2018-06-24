@@ -1,0 +1,33 @@
+---
+
+- name: Download gremlin server package
+  get_url:
+    url: "{{ package_url }}"
+    dest: /tmp/apache-tinkerpop-gremlin-server-3.3.3-bin.zip
+    force: no
+
+- name: check java
+  shell: which java
+  register: java_which
+  failed_when: java_which.rc not in [0, 1]
+ 
+- name: Install java
+  yum:
+    name: java-1.8.0-openjdk-devel
+  when: java_which.rc == 1
+
+- name: Install unzip packages
+  yum:
+    name: unzip
+    state: present
+
+- name: unzip package
+  unarchive:
+    src: /tmp/apache-tinkerpop-gremlin-server-3.3.3-bin.zip
+    dest: /opt
+    remote_src: yes
+
+
+- name: run server
+  shell: cd /opt/apache-tinkerpop-gremlin-server-3.3.3; bin/gremlin-server.sh conf/gremlin-server-rest-modern.yaml >/dev/null 2>&1 &
+ 

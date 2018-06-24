@@ -1,0 +1,5 @@
+- hosts: gremlinserver
+  become: yes
+  roles:
+    #- common
+    - gremlin
